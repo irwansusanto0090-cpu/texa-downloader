@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEXA Downloader | SRAM No Watermark</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="texalogo.png" alt="TEXA Logo" class="app-logo">
+                <div class="logo-text">
+                    <span class="texa">TEXA</span> <span class="downloader">Downloader</span>
+                </div>
+            </div>
+            <p class="subtitle">Download Sora Videos Without Watermark</p>
+        </header>
+
+        <main class="glass-card">
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-link input-icon"></i>
+                    <input type="text" id="videoUrl"
+                        placeholder="Paste Sora URL here (e.g., https://sora.chatgpt.com/...)" autocomplete="off">
+                </div>
+                <button id="downloadBtn">
+                    <span class="btn-text">Download</span>
+                    <i class="fa-solid fa-bolt btn-icon"></i>
+                    <div class="loader" id="btnLoader"></div>
+                </button>
+            </div>
+            <p class="error-msg" id="errorMsg"></p>
+        </main>
+
+        <section id="resultSection" class="result-section hidden">
+            <div class="glass-card video-card">
+                <div class="video-wrapper">
+                    <video id="videoPlayer" controls loop playsinline></video>
+                </div>
+                <div class="video-info">
+                    <h3 id="videoTitle">Video Title</h3>
+                    <div class="meta-info">
+                        <span id="videoDuration"><i class="fa-regular fa-clock"></i> --:--</span>
+                        <span id="videoViews"><i class="fa-regular fa-eye"></i> 0</span>
+                    </div>
+                    <a href="#" id="downloadLink" class="download-action-btn" target="_blank">
+                        Download Now <i class="fa-solid fa-download"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 TEXA Downloader. Built for high quality.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
