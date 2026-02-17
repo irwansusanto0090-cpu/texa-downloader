@@ -1,37 +1,53 @@
 const axios = require('axios');
+const fs = require('fs');
 
-async function testDownload() {
-    const url = 'https://sora.chatgpt.com/p/s_699400f5af6c8191b89fa660781fa37b';
+async function testDownloadFlow() {
+    const targetUrl = 'https://sora.chatgpt.com/p/s_699400f5af6c8191b89fa660781fa37b';
+    const baseUrl = 'http://localhost:3000';
+
     try {
-        console.log('Testing /api/download with URL:', url);
-        const response = await axios.post('http://localhost:3000/api/download', { url });
+        console.log('1. Fetching Video Metadata...');
+        const metaResponse = await axios.post(`${baseUrl}/api/download`, { url: targetUrl });
 
-        console.log('Response Status:', response.status);
-        console.log('Success:', response.data.success);
-
-        if (response.data.data && response.data.downloads) {
-            console.log('Video Title:', response.data.data.title.substring(0, 50) + '...');
-            const noWatermark = response.data.downloads.find(d => d.quality.includes('No Watermark'));
-            if (noWatermark) {
-                console.log('Found "No Watermark" video URL:', noWatermark.url.substring(0, 50) + '...');
-            } else {
-                console.error('No "No Watermark" video found in response.');
-            }
-        } else {
-            console.error('Invalid response structure:', response.data);
+        if (!metaResponse.data.success) {
+            throw new Error(`Metadata fetch failed: ${metaResponse.data.msg}`);
         }
+
+        const videoData = metaResponse.data.data;
+        console.log(`   Success! Title: ${videoData.title.substring(0, 30)}...`);
+
+        const noWatermark = videoData.downloads.find(d => d.quality.includes('No Watermark'));
+        if (!noWatermark) {
+            throw new Error('No watermark link not found');
+        }
+
+        console.log('2. Testing Stream Download...');
+        const streamUrl = `${baseUrl}/api/stream-download?url=${encodeURIComponent(noWatermark.url)}`;
+
+        const streamResponse = await axios({
+            method: 'GET',
+            url: streamUrl,
+            responseType: 'stream'
+        });
+
+        console.log(`   Stream status: ${streamResponse.status}`);
+        console.log(`   Content-Type: ${streamResponse.headers['content-type']}`);
+
+        // Simple check if stream is readable
+        streamResponse.data.on('data', (chunk) => {
+            // Just read one chunk to verify connectivity then destroy
+            console.log(`   Received data chunk size: ${chunk.length}`);
+            streamResponse.data.destroy();
+            console.log('   Stream test passed!');
+        });
 
     } catch (error) {
         console.error('Test Failed:', error.message);
         if (error.response) {
-            console.error('Error Response Status:', error.response.status);
-            console.error('Error Response Data:', JSON.stringify(error.response.data, null, 2));
-        } else if (error.request) {
-            console.error('No response received:', error.request);
-        } else {
-            console.error('Error setting up request:', error.message);
+            console.error('Status:', error.response.status);
+            console.error('Data:', error.response.data);
         }
     }
 }
 
-testDownload();
+testDownloadFlow();
