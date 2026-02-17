@@ -77,7 +77,12 @@ app.get('/api/stream-download', async (req, res) => {
     }
 });
 
-// Start Server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Export app for Netlify Functions
+module.exports = app;
+
+// Start Server locally if not processed by a function handler
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}
